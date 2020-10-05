@@ -6,6 +6,7 @@ import geopandas as gpd
 from shapely.geometry import MultiPoint,Point
 from matplotlib.ticker import ScalarFormatter
 import matplotlib.pyplot as plt
+import warnings
 
 class sea(gym.Env): 
     """
@@ -60,6 +61,16 @@ class sea(gym.Env):
         obs_max = [18e6,9e6]
         obs_min = [-18e6,-9e6]
         self.observation_space = spaces.Box(np.array(obs_min),np.array(obs_max),dtype=np.float64)
+        self.history = {"action": [],"reward": []}
+        try:
+            with open('edges.npy','rb') as fin:
+                edges = np.load(fin,allow_pickle=True).tolist()
+#             self.left_edges = edges['left_edges']
+            self.right_edges = edges['right_edges']
+        except:
+            warnings.warn("Map Edges are not used")
+#             self.left_edges = None
+            self.right_edges = None
         
 #   Compute the distance between starting and ending point
     def compute_distance(self,position):
@@ -77,7 +88,9 @@ class sea(gym.Env):
     def step(self, action):
         if self.state == None:
             raise ValueError('Cannot call env.step() without calling reset()')
-        position_x,position_y = self.state        
+    #   Teleport to the other side of the map in the edges          
+        if np.all(abs(np.array(self.state)) == self.right_edges,axis=1).sum() == 1:
+            self.state = -self.state[0],self.state[1]     
         if action == 0:  # move to the North
             move = self.state[0],self.state[1]+2e5
         elif action == 1:  # move to the North East
