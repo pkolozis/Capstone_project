@@ -111,15 +111,13 @@ class sea(gym.Env):
             raise ValueError('Actions are between 0 and 7')
         if self.isvalid(move):
             self.state = move
-        done = bool(self.state == (self.end_longitude,self.end_latitude))
-        a = 0.6 # reward weight
-        if not done:
+            done = bool(self.state == (self.end_longitude,self.end_latitude))
+            a = 0.6
+            if not done:
                 if action%2 == 0:
                     reward = (- (1-a)*(2e5/math.sqrt(2e5**2+2e5**2)) + a*((self.total_distance - self.compute_distance(move))/self.total_distance))
-                              #  0.1*exp(-self.compute_distance(move)/self.total_distance) )
                 else:
                     reward = (-(1-a)*1 + a*((self.total_distance - self.compute_distance(move))/self.total_distance))
-                              # 0.1*exp(-self.compute_distance(move)/self.total_distance))
                 if self.did_turn(action):
                     reward += -self.angle_turn(action)
             else:
@@ -127,7 +125,6 @@ class sea(gym.Env):
         else:
           done = True
           reward = -10
-
         self.history['action'].append(action)
         self.history['reward'].append(reward)
             
