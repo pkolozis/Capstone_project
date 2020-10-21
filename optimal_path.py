@@ -21,12 +21,16 @@ def optimal_path(env,visualize=True,equal_weights=True):
     points = env.map_['geometry'].apply(lambda g:[g.x,g.y]).tolist()
     #spatially organising the points on a tree for quick nearest neighbors calc
     kdtree = spatial.KDTree(points)
+    # get neighbors with distance math.sqrt((2e5**2)+(2e5**2))
     x = kdtree.query_ball_tree(kdtree,r=math.sqrt((2e5**2)+(2e5**2)))
     if equal_weights:
+        # create empty graph
         G = nx.Graph()
         for i in range(len(x)):
+            # remove the node  that correspond to the self 
             index = x[i].pop(np.where(np.array(x[i])==i)[0][0])
             for j in x[i]: 
+                # create edges with neighbors with weight 1 
                 G.add_edge((np.round(env.map_.loc[index].geometry.x),np.round(env.map_.loc[index].geometry.y)),
                            (np.round(env.map_.loc[j].geometry.x),np.round(env.map_.loc[j].geometry.y)),weight=1)
     else:
@@ -36,12 +40,15 @@ def optimal_path(env,visualize=True,equal_weights=True):
             for j in x[i]:
                 if math.sqrt((env.map_.loc[index].geometry.x -env.map_.loc[j].geometry.x)**2 +
                              (env.map_.loc[index].geometry.y -env.map_.loc[j].geometry.y)**2) > 2e5:
+                    # add to diagonal neighbors weight math.sqrt((2e5**2)+(2e5**2))
                     G.add_edge((np.round(env.map_.loc[index].geometry.x),np.round(env.map_.loc[index].geometry.y)),
                            (np.round(env.map_.loc[j].geometry.x),np.round(env.map_.loc[j].geometry.y)),
                            weight=math.sqrt((2e5**2)+(2e5**2)))
                 else:
+                    # add to diagonal neighbors weight 1
                     G.add_edge((np.round(env.map_.loc[index].geometry.x),np.round(env.map_.loc[index].geometry.y)),
                            (np.round(env.map_.loc[j].geometry.x),np.round(env.map_.loc[j].geometry.y)),weight=1)
+    # compute the shortest path                  
     state = nx.shortest_path(G,source=(env.start_longitude, env.start_latitude),target=(env.end_longitude,env.end_latitude),
                              weight='weight', method='dijkstra')
     if visualize:
