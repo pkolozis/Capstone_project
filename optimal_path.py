@@ -13,7 +13,7 @@ def optimal_path(env,visualize=True,equal_weights=True):
         env: Environmetnt 
         visualize: boolean. Whether to print the path or not
         equal_weights: boolean. Whether to create a graph with all edges weights equal to 1 or
-                        diagonal edges equal to math.sqrt((2e5**2)+(2e5**2))
+                        diagonal edges equal to math.sqrt(2)
     Returns:
         The lenght of the shortest path
     '''
@@ -43,7 +43,7 @@ def optimal_path(env,visualize=True,equal_weights=True):
                     # add to diagonal neighbors weight math.sqrt((2e5**2)+(2e5**2))
                     G.add_edge((np.round(env.map_.loc[index].geometry.x),np.round(env.map_.loc[index].geometry.y)),
                            (np.round(env.map_.loc[j].geometry.x),np.round(env.map_.loc[j].geometry.y)),
-                           weight=math.sqrt((2e5**2)+(2e5**2)))
+                           weight=math.sqrt(2))
                 else:
                     # add to diagonal neighbors weight 1
                     G.add_edge((np.round(env.map_.loc[index].geometry.x),np.round(env.map_.loc[index].geometry.y)),
