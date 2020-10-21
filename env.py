@@ -53,7 +53,7 @@ class sea(gym.Env):
         self.end_latitude = end_latitude
         self.end_longitude = end_longitude
 #       distance between starting and ending port
-        self.total_distance = math.sqrt((end_longitude-start_longitude)**2 + (start_latitude-start_latitude)**2)
+        self.total_distance = math.sqrt((end_longitude-start_longitude)**2 + (end_latitude-start_latitude)**2)
         self.state = None
         self.previous_action = None
         self.action_space = spaces.Discrete(8)
