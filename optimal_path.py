@@ -73,4 +73,5 @@ def optimal_path(env,visualize=True,equal_weights=True):
             formatter.set_scientific(False)
             axis.set_major_formatter(formatter)
         plt.show()
-    return len(state)
+    # -1 because len(state) contains the starting point 
+    return len(state)-1
