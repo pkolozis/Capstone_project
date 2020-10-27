@@ -88,9 +88,10 @@ class sea(gym.Env):
     def step(self, action):
         if self.state == None:
             raise ValueError('Cannot call env.step() without calling reset()')
-    #   Teleport to the other side of the map in the edges          
-        if np.all(abs(np.array(self.state)) == self.right_edges,axis=1).sum() == 1:
-            self.state = -self.state[0],self.state[1]     
+    #   Teleport to the other side of the map in the edges  
+        if self.right_edges != None:
+            if np.all(abs(np.array(self.state)) == self.right_edges,axis=1).sum() == 1:
+                self.state = -self.state[0],self.state[1]     
         if action == 0:  # move to the North
             move = self.state[0],self.state[1]+2e5
         elif action == 1:  # move to the North East
